@@ -110,7 +110,17 @@ const today = new Date(); today.setHours(12,0,0,0);
 const copy = {ko:{none:"오늘은 메뉴가 없습니다",noDate:"이 날짜에는 메뉴가 없습니다",title:"오늘의 메뉴",otherTitle:"일일 메뉴",footer:"날짜를 선택하여 메뉴를 확인하세요."},en:{none:"No menu today",noDate:"No menu available for this date",title:"Today's Menu",otherTitle:"Daily Menu",footer:"Choose a date to view the daily menu."}};
 let language = "ko";
 let selected = new Date(today);
-let windowStart = addDays(selected,-2);
+
+// Find Monday of the current week
+function getMonday(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+let windowStart = getMonday(today);
 function addDays(date,n){const d=new Date(date);d.setDate(d.getDate()+n);return d}
 function key(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`}
 function sameDay(a,b){return key(a)===key(b)}
@@ -158,8 +168,17 @@ function render(){
   document.getElementById("footer").textContent=copy[language].footer;
   document.documentElement.lang=language;
 }
-document.getElementById("previousBtn").addEventListener("click",()=>{windowStart=addDays(windowStart,-5);selected=addDays(windowStart,2);render()});
-document.getElementById("nextBtn").addEventListener("click",()=>{windowStart=addDays(windowStart,5);selected=addDays(windowStart,2);render()});
+document.getElementById("previousBtn").addEventListener("click", () => {
+  windowStart = addDays(windowStart, -7);
+  selected = new Date(windowStart);
+  render();
+});
+
+document.getElementById("nextBtn").addEventListener("click", () => {
+  windowStart = addDays(windowStart, 7);
+  selected = new Date(windowStart);
+  render();
+});
 document.getElementById("languageBtn").addEventListener("click",()=>{language=language==="ko"?"en":"ko";render()});
 document.getElementById("themeBtn").addEventListener("click",()=>document.documentElement.classList.toggle("light"));
 render();

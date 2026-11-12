@@ -28,54 +28,65 @@
   @media(max-width:600px){.menu-item{padding:17px}.menu-item .dish{font-size:17px}}
   
   /* Mobile-friendly date navigation */
- .date-navigation {
-   display: flex;
-   align-items: center;
-   gap: 8px;
-   width: 100%;
-   min-width: 0;
- }
 
- .date-list {
-   display: flex;
-   flex: 1;
-   gap: 8px;
-   min-width: 0;
-   overflow-x: auto;
-   scroll-snap-type: x mandatory;
-   scrollbar-width: none;
-   -webkit-overflow-scrolling: touch;
- }
+/* FIX: Mobile date navigation */
+@media (max-width: 600px) {
 
- .date-list::-webkit-scrollbar {
-   display: none;
- }
+  .date-picker {
+    display: grid;
+    grid-template-columns: 35px minmax(0, 1fr) 35px;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+  }
 
- .date-button {
-   flex: 0 0 72px;
-   min-width: 72px;
-   padding: 10px 6px;
-   border-radius: 12px;
-   white-space: nowrap;
-   text-align: center;
-   scroll-snap-align: center;
- }
+  .arrow {
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+    font-size: 22px;
+  }
 
- .date-button.active {
-   background: #111114;
-   color: #fff;
- } 
+  .dates {
+    display: flex;
+    gap: 6px;
+    padding: 6px;
+    min-width: 0;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 12px;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
 
- .date-navigation .nav-arrow {
-   flex: 0 0 40px;
- }
+  .dates::-webkit-scrollbar {
+    display: none;
+  }
 
- @media (max-width: 480px) {
-   .date-button {
-     flex-basis: 68px;
-     min-width: 68px;
-   }
- }
+  .date {
+    flex: 0 0 84px;
+    min-width: 84px;
+    height: 48px;
+    padding: 0 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    text-align: center;
+    border-radius: 10px;
+    scroll-snap-align: center;
+  }
+
+  .date.selected {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .date.today:not(.selected)::after {
+    bottom: 3px;
+  }
+}
+
 
 </style>
 </head>

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0c0c0e" />
+<title>Gasan Menu — Daily Menu</title>
+<style>
+  :root {color-scheme:dark;--bg:#0b0b0d;--surface:#141416;--tab:#272729;--border:#29292d;--text:#f4f4f5;--muted:#9d9da7;--soft:#b7bfd5;--accent:#ffffff;}
+  :root.light {color-scheme:light;--bg:#f8f8fa;--surface:#fff;--tab:#eaeaf0;--border:#ddddE4;--text:#202026;--muted:#71717d;--soft:#5c647a;--accent:#1b1b1d;}
+  *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+  body{min-height:100vh}button{font:inherit;cursor:pointer}button:focus-visible{outline:2px solid #8bb8ff;outline-offset:4px}
+  header{height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 max(30px,calc((100vw - 1100px)/2));gap:16px}
+  .brand{display:flex;align-items:center;gap:18px}.brand-icon{font-size:30px;filter:grayscale(.6);line-height:1}.brand h1{margin:0;font-size:22px;letter-spacing:-.7px;color:var(--muted);font-weight:750}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.header-actions{display:flex;gap:24px;align-items:center}.small-btn{display:flex;align-items:center;gap:8px;border:0;background:transparent;color:var(--text);padding:8px 3px;font-weight:650}.small-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  main{max-width:1160px;margin:30px auto;padding:0 32px}.date-picker{display:grid;grid-template-columns:50px minmax(0,1fr) 50px;gap:10px;align-items:center}.arrow{border:1px solid var(--border);border-radius:50%;background:transparent;width:50px;height:50px;color:var(--text);font-size:27px;display:grid;place-items:center;font-weight:300;line-height:1}.arrow:hover{background:var(--surface)}.dates{border-radius:15px;background:var(--tab);padding:7px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}.date{height:46px;border:0;background:transparent;color:var(--muted);border-radius:14px;position:relative;font-size:16px;font-weight:650;white-space:nowrap}.date:hover{color:var(--text)}.date.selected{background:var(--bg);color:var(--text)}.date.today:not(.selected):after{content:"";position:absolute;width:7px;height:7px;background:var(--text);border-radius:50%;bottom:3px;left:calc(50% - 3.5px)}
+  .menu-panel{margin-top:20px;border:1px solid var(--border);background:var(--surface);border-radius:16px;min-height:348px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:45px 24px;text-align:center}.empty-art{font-size:90px;line-height:1.2;margin-bottom:28px;filter:grayscale(.5)}.empty-message{font-size:22px;letter-spacing:-.45px;color:var(--soft);margin:0}.menu-header{margin:0 0 8px;font-size:14px;color:var(--muted);font-weight:650;letter-spacing:.08em;text-transform:uppercase}.menu-date{font-size:25px;margin:0 0 25px;letter-spacing:-.5px}.menu-list{width:min(100%,570px);text-align:left;display:grid;gap:13px}.menu-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:15px 18px;font-size:16px}.menu-item .kind{font-size:13px;color:var(--muted);font-weight:650;margin-right:10px}.menu-item .dish{font-weight:650}.menu-note{color:var(--muted);font-size:14px;margin:22px 0 0;line-height:1.6}.footer{text-align:center;color:var(--muted);font-size:12px;padding:16px 0}
+  @media(max-width:600px){header{padding:0 18px}.brand{gap:9px}.brand h1{font-size:18px}.brand-icon{font-size:24px}.header-actions{gap:10px}.small-btn{font-size:13px}.small-btn svg{width:18px;height:18px}main{margin:24px auto;padding:0 15px}.date-picker{grid-template-columns:35px minmax(0,1fr) 35px;gap:6px}.arrow{width:35px;height:35px;font-size:22px}.dates{padding:4px;gap:0;border-radius:11px}.date{height:45px;font-size:12px;border-radius:9px}.menu-panel{min-height:340px;padding:32px 15px}.empty-art{font-size:76px}.empty-message{font-size:19px}.menu-date{font-size:21px}.menu-item{padding:13px;font-size:14px}}
+
+  /* Main dish at the top; its accompanying dishes underneath */
+  .menu-list{width:min(100%,690px);gap:15px}
+  .menu-item{display:block;text-align:left;padding:20px 22px}
+  .menu-item .kind{display:block;font-size:12px;margin:0 0 8px;color:var(--soft)}
+  .menu-item .dish{display:block;font-size:20px;line-height:1.45;color:var(--text)}
+  .submenu-list{list-style:none;margin:16px 0 0;padding:13px 0 0;border-top:1px solid var(--border);display:grid;gap:10px}
+  .submenu-list li{padding-left:16px;position:relative;color:var(--soft);font-size:14px;line-height:1.5}
+  .submenu-list li:before{content:"•";position:absolute;left:0;color:var(--muted)}
+  .nutrition{margin-top:15px;color:var(--muted);font-size:12px}
+  @media(max-width:600px){.menu-item{padding:17px}.menu-item .dish{font-size:17px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><div class="brand-icon" aria-hidden="true">👨‍🍳</div><div><h1>Gasan Menu</h1><p>by Levy</p></div></div>
+  <div class="header-actions">
+    <button class="small-btn" id="languageBtn" aria-label="Change language"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span id="languageLabel">한국어</span></button>
+    <button class="small-btn" id="themeBtn" aria-label="Toggle light and dark theme"><svg viewBox="0 0 24 24"><path d="M20.5 14A9 9 0 0 1 10 3.5 9 9 0 1 0 20.5 14Z"/></svg></button>
+  </div>
+</header>
+<main>
+  <nav class="date-picker" aria-label="Choose a date">
+    <button class="arrow" id="previousBtn" aria-label="Previous five days">‹</button>
+    <div class="dates" id="dateTabs" role="group" aria-label="Menu dates"></div>
+    <button class="arrow" id="nextBtn" aria-label="Next five days">›</button>
+  </nav>
+  <section class="menu-panel" id="menuPanel" aria-live="polite"></section>
+  <div class="footer" id="footer">Choose a date to view the daily menu.</div>
+</main>
+<script>
+// ===== EDIT YOUR MENUS HERE =====
+const MENUS = {
+    "2026-11-09": {
+    items: [
+      { kind: "코너 1", name: "만족거리소고기국밥", enKind: "Corner 1", enName: "Beef and Rice Soup", submenus: [{"name": "쌀밥", "enName": "Steamed Rice"}, {"name": "수제김치전", "enName": "Homemade Kimchi Pancake"}, {"name": "탕평채", "enName": "Mung Bean Jelly Salad"}, {"name": "부추무침", "enName": "Seasoned Garlic Chives"}], kcal: 846, protein: 25 },
+      { kind: "코너 2", name: "반반카레·갈릭버터난", enKind: "Corner 2", enName: "Two-Style Curry with Garlic Butter Naan", submenus: [{"name": "맑은우동국물", "enName": "Clear Udon Broth"}, {"name": "만두카츠·케찹", "enName": "Fried Dumpling Cutlet with Ketchup"}, {"name": "메밀면야채무침", "enName": "Buckwheat Noodle Salad"}, {"name": "무비트피클", "enName": "Radish and Beet Pickles"}], kcal: 1196, protein: 35 },
+      { kind: "코너 3", name: "지중해오븐햇샐러드", enKind: "Corner 3", enName: "Mediterranean Oven-Baked Salad", submenus: [{"name": "클럽샌드위치·음료", "enName": "Club Sandwich and Drink"}], kcal: 815, protein: 32 },
+      { kind: "석식", name: "호박고추장찌개", enKind: "Dinner", enName: "Zucchini Gochujang Stew", submenus: [{"name": "쌀밥", "enName": "Steamed Rice"}, {"name": "제육메추리알조림", "enName": "Braised Pork and Quail Eggs"}, {"name": "연근흑임자조림", "enName": "Lotus Root with Black Sesame"}, {"name": "고들빼기무침", "enName": "Seasoned Wild Lettuce"}], kcal: 964, protein: 36 }
+    ],
+    note: "메뉴는 사정에 따라 변경될 수 있습니다.",
+    enNote: "Menu items may change without notice."
+  },
+
+  "2026-11-10": {
+    items: [
+      { kind: "코너 1", name: "우삼겹고추장짜글이", enKind: "Corner 1", enName: "Spicy Beef Belly Stew", submenus: [{"name": "쌀밥·조미김가루", "enName": "Rice with Seasoned Seaweed Flakes"}, {"name": "햄전·계란후라이", "enName": "Pan-Fried Ham and Fried Egg"}, {"name": "알감자조림", "enName": "Braised Baby Potatoes"}, {"name": "쥐어채무침", "enName": "Seasoned Dried Fish Strips"}], kcal: 900, protein: 38 },
+      { kind: "코너 2", name: "해물짬뽕", enKind: "Corner 2", enName: "Spicy Seafood Noodle Soup", submenus: [{"name": "쌀밥 1/2", "enName": "Half Portion of Rice"}, {"name": "탕수육", "enName": "Sweet and Sour Pork"}, {"name": "쫄깃단무지", "enName": "Pickled Yellow Radish"}, {"name": "요구르트", "enName": "Yogurt Drink"}], kcal: 1223, protein: 34 },
+      { kind: "코너 3", name: "팝콘치킨샐러드", enKind: "Corner 3", enName: "Popcorn Chicken Salad", submenus: [{"name": "단백질팩", "enName": "Protein Pack"}], kcal: 820, protein: 33 },
+      { kind: "석식", name: "참치캔쌈야채비빔밥", enKind: "Dinner", enName: "Tuna and Vegetable Bibimbap", submenus: [{"name": "계란후라이", "enName": "Fried Egg"}, {"name": "들깨무채국", "enName": "Radish Soup with Perilla Seeds"}, {"name": "미역줄기볶음", "enName": "Stir-Fried Seaweed Stems"}, {"name": "고구마맛탕", "enName": "Candied Sweet Potatoes"}], kcal: 957, protein: 36 }
+    ],
+    note: "메뉴는 사정에 따라 변경될 수 있습니다.",
+    enNote: "Menu items may change without notice."
+  },
+
+  "2026-11-11": {
+    items: [
+      { kind: "코너 1", name: "나주곰탕&당면사리", enKind: "Corner 1", enName: "Naju Beef Soup with Glass Noodles", submenus: [{"name": "잡곡밥", "enName": "Multigrain Rice"}, {"name": "두부양념구이", "enName": "Seasoned Grilled Tofu"}, {"name": "미니새송이볶음", "enName": "Stir-Fried King Oyster Mushrooms"}, {"name": "아삭이고추된장무침", "enName": "Green Peppers with Soybean Paste"}], kcal: 894, protein: 31 },
+      { kind: "코너 2", name: "수제함박·데미그라스", enKind: "Corner 2", enName: "Hamburg Steak with Demi-Glace", submenus: [{"name": "검정깨밥", "enName": "Black Sesame Rice"}, {"name": "옥수수스프", "enName": "Corn Soup"}, {"name": "감자튀김·갈릭디핑소스", "enName": "French Fries with Garlic Dip"}, {"name": "모듬피클", "enName": "Assorted Pickles"}], kcal: 1178, protein: 33 },
+      { kind: "코너 3", name: "오징어까스샐러드", enKind: "Corner 3", enName: "Squid Cutlet Salad", submenus: [{"name": "클럽샌드위치·음료", "enName": "Club Sandwich and Drink"}], kcal: 822, protein: 32 },
+      { kind: "석식", name: "순대야채볶음", enKind: "Dinner", enName: "Stir-Fried Korean Blood Sausage", submenus: [{"name": "쌀밥", "enName": "Steamed Rice"}, {"name": "시금치국", "enName": "Spinach Soup"}, {"name": "우엉콩조림", "enName": "Braised Burdock Root and Beans"}, {"name": "오이지양파무침", "enName": "Pickled Cucumber and Onion Salad"}], kcal: 1015, protein: 29 }
+    ],
+    note: "메뉴는 사정에 따라 변경될 수 있습니다.",
+    enNote: "Menu items may change without notice."
+  },
+
+  "2026-11-12": {
+    items: [
+      { kind: "코너 1", name: "연탄구이맛 제육볶음", enKind: "Corner 1", enName: "Charcoal-Style Spicy Pork", submenus: [{"name": "쌀밥", "enName": "Steamed Rice"}, {"name": "미역국", "enName": "Seaweed Soup"}, {"name": "후랑크야채볶음", "enName": "Stir-Fried Sausage and Vegetables"}, {"name": "양배추·다시마쌈·쌈장", "enName": "Cabbage and Kelp Wraps with Ssamjang"}], kcal: 950, protein: 33 },
+      { kind: "코너 2", name: "콩나물해장라면", enKind: "Corner 2", enName: "Bean Sprout Hangover Ramen", submenus: [{"name": "맛살김밥 1/2", "enName": "Half Portion of Crab Stick Gimbap"}, {"name": "단무지", "enName": "Pickled Yellow Radish"}, {"name": "핫도그·케찹", "enName": "Korean Corn Dog with Ketchup"}], kcal: 1001, protein: 29 },
+      { kind: "코너 3", name: "코코넛쉬림프파인애플샐러드", enKind: "Corner 3", enName: "Coconut Shrimp and Pineapple Salad", submenus: [{"name": "간식팩", "enName": "Snack Pack"}], kcal: 830, protein: 31 },
+      { kind: "석식", name: "짜장덮밥", enKind: "Dinner", enName: "Black Bean Sauce Rice Bowl", submenus: [{"name": "계란파국", "enName": "Egg and Green Onion Soup"}, {"name": "만두강정", "enName": "Sweet and Spicy Glazed Dumplings"}, {"name": "짜사이무침", "enName": "Seasoned Pickled Mustard Stem"}, {"name": "청포도젤리", "enName": "Green Grape Jelly"}], kcal: 1001, protein: 31 }
+    ],
+    note: "메뉴는 사정에 따라 변경될 수 있습니다.",
+    enNote: "Menu items may change without notice."
+  },
+
+  "2026-11-13": {
+    items: [
+      { kind: "코너 1", name: "돌솥비빔밥", enKind: "Corner 1", enName: "Hot Stone Pot Bibimbap", submenus: [{"name": "얼갈이국", "enName": "Young Napa Cabbage Soup"}, {"name": "부들어묵볶음", "enName": "Stir-Fried Fish Cakes"}, {"name": "무생채", "enName": "Spicy Radish Salad"}, {"name": "제주감귤주스", "enName": "Jeju Tangerine Juice"}], kcal: 871, protein: 35 },
+      { kind: "코너 2", name: "1코너 운영합니다", enKind: "Corner 2", enName: "Corner 1 Only", submenus: [] },
+      { kind: "코너 3", name: "훈제오리단호박샐러드", enKind: "Corner 3", enName: "Smoked Duck and Sweet Pumpkin Salad", submenus: [{"name": "클럽샌드위치·음료", "enName": "Club Sandwich and Drink"}], kcal: 827, protein: 30 },
+      { kind: "석식", name: "콩비지찌개", enKind: "Dinner", enName: "Soybean Pulp Stew", submenus: [{"name": "쌀밥", "enName": "Steamed Rice"}, {"name": "생선적·데리야끼소스", "enName": "Pan-Fried Fish with Teriyaki Sauce"}, {"name": "얼무겉절이", "enName": "Fresh Radish Kimchi"}, {"name": "도시락김", "enName": "Roasted Seaweed"}], kcal: 928, protein: 32 }
+    ],
+    note: "메뉴는 사정에 따라 변경될 수 있습니다.",
+    enNote: "Menu items may change without notice."
+  }
+};
+// ===== END OF MENU DATA =====
+
+const localeWeekdays = {ko:["일","월","화","수","목","금","토"],en:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]};
+const today = new Date(); today.setHours(12,0,0,0);
+const copy = {ko:{none:"오늘은 메뉴가 없습니다",noDate:"이 날짜에는 메뉴가 없습니다",title:"오늘의 메뉴",otherTitle:"일일 메뉴",footer:"날짜를 선택하여 메뉴를 확인하세요."},en:{none:"No menu today",noDate:"No menu available for this date",title:"Today's Menu",otherTitle:"Daily Menu",footer:"Choose a date to view the daily menu."}};
+let language = "ko";
+let selected = new Date(today);
+let windowStart = addDays(selected,-2);
+function addDays(date,n){const d=new Date(date);d.setDate(d.getDate()+n);return d}
+function key(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`}
+function sameDay(a,b){return key(a)===key(b)}
+function formatTab(d){return `${d.getMonth()+1}/${d.getDate()} (${localeWeekdays[language][d.getDay()]})`}
+function render(){
+  const tabs=document.getElementById("dateTabs"); tabs.replaceChildren();
+  for(let i=0;i<5;i++){
+    const date=addDays(windowStart,i);const button=document.createElement("button");button.type="button";button.className="date"+(sameDay(date,selected)?" selected":"")+(sameDay(date,today)?" today":"");button.textContent=formatTab(date);button.setAttribute("aria-pressed",sameDay(date,selected));button.setAttribute("aria-label",date.toLocaleDateString(language==="ko"?"ko-KR":"en-US",{dateStyle:"full"}));button.addEventListener("click",()=>{selected=date;render()});tabs.append(button);
+  }
+  const panel=document.getElementById("menuPanel");panel.replaceChildren();const menu=MENUS[key(selected)];
+  if(!menu||!menu.items||menu.items.length===0){
+    const art=document.createElement("div");art.className="empty-art";art.textContent="👨‍🍳";art.setAttribute("aria-hidden","true");const msg=document.createElement("p");msg.className="empty-message";msg.textContent=sameDay(selected,today)?copy[language].none:copy[language].noDate;panel.append(art,msg);
+  }else{
+    const sub=document.createElement("p");sub.className="menu-header";sub.textContent=sameDay(selected,today)?copy[language].title:copy[language].otherTitle;
+    const heading=document.createElement("h2");heading.className="menu-date";heading.textContent=selected.toLocaleDateString(language==="ko"?"ko-KR":"en-US",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
+    const list=document.createElement("div");list.className="menu-list";
+    for(const item of menu.items){
+      const row=document.createElement("article");row.className="menu-item";
+      const kind=document.createElement("span");kind.className="kind";
+      kind.textContent=language==="ko"?item.kind:(item.enKind||item.kind);
+      const dish=document.createElement("strong");dish.className="dish";
+      dish.textContent=language==="ko"?item.name:(item.enName||item.name);
+      row.append(kind,dish);
+      if(item.submenus && item.submenus.length){
+        const sides=document.createElement("ul");sides.className="submenu-list";
+        for(const side of item.submenus){
+          const entry=document.createElement("li");
+          entry.textContent=language==="ko"?side.name:(side.enName||side.name);
+          sides.append(entry);
+        }
+        row.append(sides);
+      }
+      if(item.kcal!=null){
+        const nutrition=document.createElement("div");nutrition.className="nutrition";
+        nutrition.textContent=`${Number(item.kcal).toLocaleString()} kcal`+
+          (item.protein!=null?` · ${language==="ko"?"단백질":"Protein"} ${item.protein}g`:"");
+        row.append(nutrition);
+      }
+      list.append(row);
+    }
+    panel.append(sub,heading,list);
+    const note=language==="ko"?menu.note:menu.enNote;if(note){const p=document.createElement("p");p.className="menu-note";p.textContent=note;panel.append(p)}
+  }
+  document.getElementById("languageLabel").textContent=language==="ko"?"한국어":"English";
+  document.getElementById("footer").textContent=copy[language].footer;
+  document.documentElement.lang=language;
+}
+document.getElementById("previousBtn").addEventListener("click",()=>{windowStart=addDays(windowStart,-5);selected=addDays(windowStart,2);render()});
+document.getElementById("nextBtn").addEventListener("click",()=>{windowStart=addDays(windowStart,5);selected=addDays(windowStart,2);render()});
+document.getElementById("languageBtn").addEventListener("click",()=>{language=language==="ko"?"en":"ko";render()});
+document.getElementById("themeBtn").addEventListener("click",()=>document.documentElement.classList.toggle("light"));
+render();
+</script>
+</body>
+</html>

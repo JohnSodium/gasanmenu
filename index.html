@@ -185,3 +185,54 @@ render();
 </script>
 </body>
 </html>
+
+
+/* Mobile-friendly date navigation */
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.date-list {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.date-list::-webkit-scrollbar {
+  display: none;
+}
+
+.date-button {
+  flex: 0 0 72px;
+  min-width: 72px;
+  padding: 10px 6px;
+  border-radius: 12px;
+  white-space: nowrap;
+  text-align: center;
+  scroll-snap-align: center;
+}
+
+.date-button.active {
+  background: #111114;
+  color: #fff;
+}
+
+.date-navigation .nav-arrow {
+  flex: 0 0 40px;
+}
+
+@media (max-width: 480px) {
+  .date-button {
+    flex-basis: 68px;
+    min-width: 68px;
+  }
+}

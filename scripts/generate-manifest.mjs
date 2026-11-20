@@ -1,12 +1,16 @@
 import { readdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 
-const files = (await readdir("./menus"))
-  .filter(file => /^\d{4}-\d{2}-\d{2}\.js$/.test(file))
+const menuDir = path.resolve("menus");
+
+const files = (await readdir(menuDir))
+  .filter((file) => file.endsWith(".js"))
   .sort();
 
 await writeFile(
-  "./menus/manifest.json",
-  JSON.stringify(files, null, 2) + "\n"
+  path.join(menuDir, "manifest.json"),
+  JSON.stringify(files, null, 2) + "\n",
+  "utf8"
 );
 
-console.log(`Found ${files.length} weekly menu files.`);
+console.log("Generated menu manifest:", files);

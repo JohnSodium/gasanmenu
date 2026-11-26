@@ -149,24 +149,6 @@ To deploy your own instance:
 
 No API keys, database, or server-side infrastructure are required for the static website.
 
-## 💻 Local Development
-
-Clone the repository and navigate to the project directory.
-
-Start a local HTTP server:
-
-```bash
-python -m http.server 8000
-```
-
-Open the following address in your browser:
-
-```text
-http://localhost:8000
-```
-
-A local HTTP server is recommended because the website uses JavaScript modules.
-
 ## 🎯 Project Goals
 
 - Make cafeteria menus easier to access and understand.
@@ -174,17 +156,6 @@ A local HTTP server is recommended because the website uses JavaScript modules.
 - Reduce the time required to publish weekly menus.
 - Maintain a lightweight and easy-to-update website.
 - Avoid unnecessary infrastructure and dependencies.
-
-## 🔮 Potential Future Improvements
-
-- Historical menu browsing
-- Favorite dishes
-- Menu search
-- Nutritional comparisons
-- Automatic weekly menu publishing
-- Allergen information
-- Daily meal notifications
-- Progressive Web App (PWA) support
 
 ## ⚠️ Disclaimer
 
